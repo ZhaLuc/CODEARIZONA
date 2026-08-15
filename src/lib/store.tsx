@@ -15,7 +15,7 @@ import { teachers } from "@/data/teachers";
 import { clampGift, liveItems, liveWishlist, requestTotals } from "./fulfillment";
 import type { Account, EvidenceFile, FulfillmentStatus, LastAction, LiveFulfillment, Role } from "./types";
 
-const KEY = "meridian-session-v3";
+const KEY = "meridian-session-v4";
 
 type AppState = {
   accounts: Account[];
@@ -85,7 +85,15 @@ function setState(patch: Partial<AppState>) {
 }
 
 export function resetSession() {
-  memory = { ...initial, accounts: mergeAccounts(memory.accounts) };
+  memory = {
+    ...initial,
+    accounts: mergeAccounts(memory.accounts),
+    sessionUserId: memory.sessionUserId,
+  };
+  if (typeof window !== "undefined") {
+    localStorage.removeItem("meridian-session-v3");
+    localStorage.setItem(KEY, JSON.stringify(memory));
+  }
   emit();
 }
 
@@ -93,6 +101,66 @@ function campusDestination(teacherId: string) {
   const teacher = teachers.find((t) => t.id === teacherId);
   const school = teacher ? schools.find((s) => s.id === teacher.schoolId) : undefined;
   return school ? `${school.name} campus fulfillment, ${school.city}` : "School campus fulfillment";
+}
+
+function commitFulfillment(input: {
+  requestId: string;
+  itemId: string;
+  quantity: number;
+  channel: LiveFulfillment["channel"];
+  status: FulfillmentStatus;
+  evidence?: EvidenceFile;
+}) {
+  const actor = memory.accounts.find((a) => a.id === memory.sessionUserId);
+  if (!actor) return { ok: false, message: "Sign in to submit fulfillment." };
+  if (actor.role === "teacher") {
+    return { ok: false, message: "Teacher accounts verify fulfillment. Sign in as a community member to submit." };
+  }
+  const request = seedRequests.find((r) => r.id === input.requestId);
+  if (!request) return { ok: false, message: "Need not found." };
+  if (!request.accepting) return { ok: false, message: "This classroom is not accepting items." };
+  const items = liveItems(request, memory.events);
+  const item = items.find((i) => i.id === input.itemId);
+  if (!item) return { ok: false, message: "Item not found." };
+  const gift = clampGift(item.remainingAfterPending, input.quantity);
+  if (!gift.quantity) return { ok: false, message: gift.error ?? "Could not apply that amount." };
+  const event: LiveFulfillment = {
+    id: `ev-${Date.now()}`,
+    actorId: actor.id,
+    actorName: actor.name,
+    teacherId: request.teacherId,
+    requestId: input.requestId,
+    itemId: input.itemId,
+    itemName: item.name,
+    quantity: gift.quantity,
+    channel: input.channel,
+    status: input.status,
+    at: new Date().toISOString(),
+    destination: campusDestination(request.teacherId),
+    evidence: input.evidence,
+  };
+  const nextEvents = [...memory.events, event];
+  const after = liveItems(request, nextEvents).find((i) => i.id === input.itemId)!;
+  const action: LastAction = {
+    eventId: event.id,
+    itemName: item.name,
+    quantity: gift.quantity,
+    needed: item.quantityNeeded,
+    verified: after.verified,
+    pending: after.pending,
+    remaining: after.remaining,
+    remainingAfterPending: after.remainingAfterPending,
+    kind: "submitted",
+  };
+  setState({ events: nextEvents, lastAction: action, noticeOpen: false });
+  return {
+    ok: true,
+    eventId: event.id,
+    message:
+      input.channel === "in_person"
+        ? `${gift.quantity} ${item.name.toLowerCase()} recorded. Awaiting teacher confirmation. Verified stays ${after.verified} / ${item.quantityNeeded}.`
+        : `Shipment submitted. Under review. Verified stays ${after.verified} / ${item.quantityNeeded}.`,
+  };
 }
 
 export function useAppStore() {
@@ -137,51 +205,24 @@ export function useAppStore() {
   }, []);
 
   const submitInPerson = useCallback((requestId: string, itemId: string, quantity: number) => {
-    const actor = memory.accounts.find((a) => a.id === memory.sessionUserId);
-    if (!actor) return { ok: false, message: "Sign in to submit fulfillment." };
-    if (actor.role === "teacher") {
-      return { ok: false, message: "Teacher accounts verify fulfillment. Sign in as a community member to submit." };
-    }
-    const request = seedRequests.find((r) => r.id === requestId);
-    if (!request) return { ok: false, message: "Need not found." };
-    if (!request.accepting) return { ok: false, message: "This classroom is not accepting items." };
-    const items = liveItems(request, memory.events);
-    const item = items.find((i) => i.id === itemId);
-    if (!item) return { ok: false, message: "Item not found." };
-    const gift = clampGift(item.remainingAfterPending, quantity);
-    if (!gift.quantity) return { ok: false, message: gift.error ?? "Could not apply that amount." };
-    const event: LiveFulfillment = {
-      id: `ev-${Date.now()}`,
-      actorId: actor.id,
-      actorName: actor.name,
-      teacherId: request.teacherId,
+    return commitFulfillment({
       requestId,
       itemId,
-      itemName: item.name,
-      quantity: gift.quantity,
+      quantity,
       channel: "in_person",
+      status: "pending_teacher_confirmation",
+    });
+  }, []);
+
+  const submitShipment = useCallback((requestId: string, itemId: string, quantity: number, evidence: EvidenceFile) => {
+    return commitFulfillment({
+      requestId,
+      itemId,
+      quantity,
+      channel: "ship",
       status: "under_review",
-      at: new Date().toISOString(),
-      destination: campusDestination(request.teacherId),
-    };
-    const nextEvents = [...memory.events, event];
-    const after = liveItems(request, nextEvents).find((i) => i.id === itemId)!;
-    const action: LastAction = {
-      eventId: event.id,
-      itemName: item.name,
-      quantity: gift.quantity,
-      needed: item.quantityNeeded,
-      verified: after.verified,
-      pending: after.pending,
-      remaining: after.remaining,
-      remainingAfterPending: after.remainingAfterPending,
-      kind: "submitted",
-    };
-    setState({ events: nextEvents, lastAction: action, noticeOpen: true });
-    return {
-      ok: true,
-      message: `${gift.quantity} ${item.name.toLowerCase()} submitted. Pending teacher verification. Verified count stays ${after.verified} / ${item.quantityNeeded}.`,
-    };
+      evidence,
+    });
   }, []);
 
   const submitWishlist = useCallback(
@@ -235,7 +276,8 @@ export function useAppStore() {
     [],
   );
 
-  const reviewEvent = useCallback((eventId: string, status: Extract<FulfillmentStatus, "verified" | "needs_attention">, note?: string) => {
+  const reviewEvent = useCallback(
+    (eventId: string, status: Extract<FulfillmentStatus, "verified" | "rejected" | "not_received">, note?: string) => {
     const actor = memory.accounts.find((a) => a.id === memory.sessionUserId);
     if (!actor) return { ok: false, message: "Sign in to review fulfillment." };
     const event = memory.events.find((e) => e.id === eventId);
@@ -264,10 +306,13 @@ export function useAppStore() {
       ok: true,
       message:
         status === "verified"
-          ? `Verified ${event.quantity} ${event.itemName.toLowerCase()}. Ledger updated.`
-          : `Marked as needs attention. Verified count did not change.`,
+          ? `${event.quantity} ${event.itemName.toLowerCase()} verified.`
+          : status === "not_received"
+            ? "Marked as not received. Verified count did not change."
+            : "Rejected. Verified count did not change.",
     };
-  }, []);
+  },
+  []);
 
   const closeNotice = useCallback(() => setState({ noticeOpen: false }), []);
 
@@ -302,6 +347,7 @@ export function useAppStore() {
     signOut,
     signUp,
     submitInPerson,
+    submitShipment,
     submitWishlist,
     reviewEvent,
     closeNotice,
@@ -313,7 +359,7 @@ export function useAppStore() {
 }
 
 function isOpenReview(status: FulfillmentStatus) {
-  return status === "submitted" || status === "under_review";
+  return status === "under_review" || status === "pending_teacher_confirmation";
 }
 
 const AppContext = createContext<ReturnType<typeof useAppStore> | null>(null);

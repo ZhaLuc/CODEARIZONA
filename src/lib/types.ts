@@ -17,8 +17,13 @@ export type BillTopic =
   | "curriculum"
   | "special-education";
 export type Role = "teacher" | "community" | "admin";
-export type FulfillmentChannel = "in_person" | "wishlist_shipment";
-export type FulfillmentStatus = "submitted" | "under_review" | "verified" | "needs_attention";
+export type FulfillmentChannel = "ship" | "in_person" | "wishlist_shipment";
+export type FulfillmentStatus =
+  | "under_review"
+  | "pending_teacher_confirmation"
+  | "verified"
+  | "rejected"
+  | "not_received";
 
 export type School = {
   id: string;
@@ -142,6 +147,7 @@ export type EvidenceFile = {
   fileName: string;
   fileKind: "image" | "pdf";
   sizeLabel: string;
+  previewUrl?: string;
 };
 
 export type LiveFulfillment = {

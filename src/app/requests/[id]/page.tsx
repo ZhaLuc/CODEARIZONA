@@ -10,6 +10,7 @@ import { FulfillmentTimeline } from "@/components/WishlistPanel";
 import { bills } from "@/data/bills";
 import { hydrateRequest } from "@/lib/catalog";
 import { formatDate, formatStamp } from "@/lib/format";
+import { fulfillmentStatusLabel } from "@/lib/fulfillment";
 import { useApp } from "@/lib/store";
 
 export default function RequestDetailPage() {
@@ -40,7 +41,7 @@ export default function RequestDetailPage() {
     })),
     ...history.map((h) => ({
       id: h.id,
-      label: `${h.quantity} ${h.itemName.toLowerCase()} ${h.status === "verified" ? "verified" : "submitted"}`,
+      label: `${h.quantity} ${h.itemName.toLowerCase()} ${fulfillmentStatusLabel[h.status].toLowerCase()}`,
       detail: h.actorName,
       date: formatStamp(h.at),
       status: h.status,
@@ -71,7 +72,7 @@ export default function RequestDetailPage() {
           <p className="mt-2 text-lg">
             {markers.remaining === 0
               ? "This line is closed."
-              : `${markers.remaining} still needed. ${markers.pending ? `${markers.pending} pending verification.` : ""}`}
+              : `${markers.verified} / ${markers.quantityNeeded} verified. ${markers.remaining} still needed.${markers.pending ? ` ${markers.pending} pending verification.` : ""}`}
           </p>
         </section>
       )}
@@ -98,8 +99,7 @@ export default function RequestDetailPage() {
             <p className="text-sm text-ink-soft">
               {teacher.gradeLevels} · {teacher.subjects.join(" · ")}
             </p>
-            <p className="mt-3 text-sm text-ink-soft">{teacher.classroom}</p>
-            <p className="mt-3 text-xs text-ink-faint">Campus location only. Home address is never shown.</p>
+              <p className="mt-3 text-xs text-ink-faint">Campus location only. Home address is never shown.</p>
           </Link>
         </aside>
       </section>

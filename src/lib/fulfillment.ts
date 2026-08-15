@@ -17,7 +17,7 @@ export type LiveItem = RequestItem & {
   pct: number;
 };
 
-export const pendingStatuses: FulfillmentStatus[] = ["submitted", "under_review"];
+export const pendingStatuses: FulfillmentStatus[] = ["under_review", "pending_teacher_confirmation"];
 
 export function isPending(status: FulfillmentStatus) {
   return pendingStatuses.includes(status);
@@ -132,11 +132,16 @@ export const ledgerStateLabel: Record<LedgerState, string> = {
 };
 
 export const fulfillmentStatusLabel: Record<FulfillmentStatus, string> = {
-  submitted: "Submitted",
   under_review: "Under review",
+  pending_teacher_confirmation: "Awaiting teacher confirmation",
   verified: "Verified",
-  needs_attention: "Needs attention",
+  rejected: "Rejected",
+  not_received: "Not received",
 };
+
+export function methodLabel(channel: "ship" | "in_person" | "wishlist_shipment") {
+  return channel === "in_person" ? "In person" : "Ship";
+}
 
 export function clampGift(remaining: number, requested: number) {
   if (!Number.isFinite(requested) || requested < 1) {

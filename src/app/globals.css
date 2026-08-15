@@ -54,6 +54,21 @@
 
 html {
   scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+*::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+html, body, * {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 html, body {
@@ -64,6 +79,10 @@ html, body {
 
 body {
   min-height: 100dvh;
+}
+
+body[data-menu="open"] {
+  overflow: hidden;
 }
 
 h1, h2, h3, .display {

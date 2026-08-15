@@ -26,8 +26,18 @@ export function Badge({
 }
 
 export function StatusChip({ status }: { status: FulfillmentStatus }) {
-  const tone = status === "verified" ? "verified" : status === "needs_attention" ? "danger" : "pending";
+  const tone =
+    status === "verified" ? "verified" : status === "rejected" || status === "not_received" ? "danger" : "pending";
   return <Badge tone={tone}>{fulfillmentStatusLabel[status]}</Badge>;
+}
+
+export function MethodBadge({ channel }: { channel: "ship" | "in_person" | "wishlist_shipment" }) {
+  const ship = channel !== "in_person";
+  return (
+    <span className="inline-flex items-center rounded-full border border-line px-2.5 py-0.5 text-[11px] font-medium tracking-[0.08em] uppercase">
+      {ship ? "Ship" : "In person"}
+    </span>
+  );
 }
 
 export function EmptyState({ title, body, action }: { title: string; body: string; action?: ReactNode }) {

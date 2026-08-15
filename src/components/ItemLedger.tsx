@@ -35,7 +35,7 @@ export function ItemLedger({
       </div>
       {item.pending > 0 && (
         <p className="mt-2 text-xs text-pending">
-          {item.pending} pending verification. Still needed after pending fulfillment: {item.remainingAfterPending}.
+          {item.pending} pending verification. {item.remainingAfterPending} would remain once verified.
         </p>
       )}
       {almost && item.remaining > 0 && item.pending === 0 && (
@@ -101,10 +101,12 @@ export function NeedCount({
       <p className="text-[11px] uppercase tracking-[0.18em] text-ink-faint">Items still needed</p>
       <p className="num mt-1 text-6xl leading-none md:text-7xl">{remaining}</p>
       <p className="mt-3 text-sm text-ink-soft">
-        {verified} verified of {needed} · {ledgerStateLabel[state]}
+        {verified} / {needed} verified · {ledgerStateLabel[state]}
       </p>
       {pending ? (
-        <p className="mt-1 text-sm text-pending">{pending} pending verification. Not counted yet.</p>
+        <p className="mt-1 text-sm text-pending">
+          {pending} pending verification. {remaining - pending > 0 ? `${remaining - pending} would remain once verified.` : "This line would close once verified."} Not counted yet.
+        </p>
       ) : (
         <p className="mt-1 text-xs text-ink-faint">A mixed list stays open until every line is verified closed.</p>
       )}
