@@ -1,47 +1,121 @@
-import type { ClassroomRequest, DemoContribution, RequestItem } from "./types";
+import type {
+  ClassroomRequest,
+  FulfillmentStatus,
+  LiveFulfillment,
+  RequestItem,
+  Wishlist,
+  WishlistItem,
+} from "./types";
 
 export type LiveItem = RequestItem & {
-  fulfilled: number;
+  verified: number;
+  pending: number;
   remaining: number;
+  remainingAfterPending: number;
+  fulfilled: number;
   status: "open" | "partial" | "fulfilled";
   pct: number;
 };
 
-export function itemProgress(item: RequestItem, extra = 0): LiveItem {
-  const fulfilled = Math.min(item.quantityNeeded, item.quantitySeedFulfilled + extra);
-  const remaining = Math.max(0, item.quantityNeeded - fulfilled);
-  const pct = item.quantityNeeded === 0 ? 100 : Math.round((fulfilled / item.quantityNeeded) * 100);
-  const status = remaining === 0 ? "fulfilled" : fulfilled === 0 ? "open" : "partial";
-  return { ...item, fulfilled, remaining, status, pct };
+export const pendingStatuses: FulfillmentStatus[] = ["submitted", "under_review"];
+
+export function isPending(status: FulfillmentStatus) {
+  return pendingStatuses.includes(status);
 }
 
-export function extrasFor(contributions: DemoContribution[], requestId: string, itemId: string) {
-  return contributions
-    .filter((c) => c.requestId === requestId && c.itemId === itemId)
-    .reduce((sum, c) => sum + c.quantity, 0);
+export function qtyFor(
+  events: LiveFulfillment[],
+  match: (e: LiveFulfillment) => boolean,
+  statusCheck: (e: LiveFulfillment) => boolean,
+) {
+  return events.filter((e) => match(e) && statusCheck(e)).reduce((sum, e) => sum + e.quantity, 0);
 }
 
-export function liveItems(request: ClassroomRequest, contributions: DemoContribution[]): LiveItem[] {
-  return request.items.map((item) => itemProgress(item, extrasFor(contributions, request.id, item.id)));
+export function itemProgress(item: RequestItem, verifiedExtra = 0, pendingExtra = 0): LiveItem {
+  const verified = Math.min(item.quantityNeeded, item.quantitySeedFulfilled + verifiedExtra);
+  const pending = Math.max(0, Math.min(item.quantityNeeded - verified, pendingExtra));
+  const remaining = Math.max(0, item.quantityNeeded - verified);
+  const remainingAfterPending = Math.max(0, remaining - pending);
+  const pct = item.quantityNeeded === 0 ? 100 : Math.round((verified / item.quantityNeeded) * 100);
+  const status = remaining === 0 ? "fulfilled" : verified === 0 ? "open" : "partial";
+  return {
+    ...item,
+    verified,
+    pending,
+    remaining,
+    remainingAfterPending,
+    fulfilled: verified,
+    status,
+    pct,
+  };
+}
+
+function itemMatch(requestId: string, itemId: string) {
+  return (e: LiveFulfillment) => e.requestId === requestId && e.itemId === itemId;
+}
+
+export function liveItems(request: ClassroomRequest, events: LiveFulfillment[]): LiveItem[] {
+  return request.items.map((item) =>
+    itemProgress(
+      item,
+      qtyFor(events, itemMatch(request.id, item.id), (e) => e.status === "verified"),
+      qtyFor(events, itemMatch(request.id, item.id), (e) => isPending(e.status)),
+    ),
+  );
 }
 
 export function requestTotals(items: LiveItem[]) {
   const needed = items.reduce((s, i) => s + i.quantityNeeded, 0);
-  const fulfilled = items.reduce((s, i) => s + i.fulfilled, 0);
+  const fulfilled = items.reduce((s, i) => s + i.verified, 0);
+  const pending = items.reduce((s, i) => s + i.pending, 0);
   const remaining = items.reduce((s, i) => s + i.remaining, 0);
+  const remainingAfterPending = items.reduce((s, i) => s + i.remainingAfterPending, 0);
   const allFilled = items.length > 0 && items.every((i) => i.status === "fulfilled");
-  const noneFilled = items.every((i) => i.fulfilled === 0);
+  const noneFilled = items.every((i) => i.verified === 0);
   const pct = needed === 0 ? 0 : Math.round((fulfilled / needed) * 100);
   const status = allFilled ? "fulfilled" : noneFilled ? "open" : "partial";
-  return { needed, fulfilled, remaining, pct, status, itemCount: items.length, filledItems: items.filter((i) => i.status === "fulfilled").length };
+  return {
+    needed,
+    fulfilled,
+    pending,
+    remaining,
+    remainingAfterPending,
+    pct,
+    status,
+    itemCount: items.length,
+    filledItems: items.filter((i) => i.status === "fulfilled").length,
+  };
+}
+
+export type LiveWishItem = WishlistItem & {
+  verified: number;
+  pending: number;
+  remaining: number;
+  remainingAfterPending: number;
+};
+
+export function liveWishlist(list: Wishlist, events: LiveFulfillment[]): LiveWishItem[] {
+  return list.items.map((item) => {
+    const match = (e: LiveFulfillment) => e.wishlistId === list.id && e.itemId === item.id;
+    const verified = qtyFor(events, match, (e) => e.status === "verified");
+    const pending = qtyFor(events, match, (e) => isPending(e.status));
+    const remaining = Math.max(0, item.quantity - verified);
+    return {
+      ...item,
+      verified,
+      pending,
+      remaining,
+      remainingAfterPending: Math.max(0, remaining - pending),
+    };
+  });
 }
 
 export type LedgerState = "not-started" | "partial" | "almost" | "complete";
 
-export function ledgerState(fulfilled: number, needed: number): LedgerState {
-  if (needed <= 0 || fulfilled >= needed) return "complete";
-  if (fulfilled <= 0) return "not-started";
-  const remaining = needed - fulfilled;
+export function ledgerState(verified: number, needed: number): LedgerState {
+  if (needed <= 0 || verified >= needed) return "complete";
+  if (verified <= 0) return "not-started";
+  const remaining = needed - verified;
   if (remaining <= 5 || remaining / needed <= 0.2) return "almost";
   return "partial";
 }
@@ -57,19 +131,25 @@ export const ledgerStateLabel: Record<LedgerState, string> = {
   complete: "Closed",
 };
 
+export const fulfillmentStatusLabel: Record<FulfillmentStatus, string> = {
+  submitted: "Submitted",
+  under_review: "Under review",
+  verified: "Verified",
+  needs_attention: "Needs attention",
+};
+
 export function clampGift(remaining: number, requested: number) {
   if (!Number.isFinite(requested) || requested < 1) {
     return { quantity: 0, error: "Enter a whole number of 1 or more." };
   }
   const whole = Math.floor(requested);
   if (remaining <= 0) {
-    return { quantity: 0, error: "This item is already fulfilled." };
+    return { quantity: 0, error: "This item is already closed." };
   }
   if (whole > remaining) {
     return {
-      quantity: remaining,
-      error: `Only ${remaining} still needed. We'll apply ${remaining}.`,
-      clamped: true,
+      quantity: 0,
+      error: `Only ${remaining} remain.`,
     };
   }
   return { quantity: whole };

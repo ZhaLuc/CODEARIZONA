@@ -1,8 +1,8 @@
 import type { School } from "@/lib/types";
 
 /**
- * Public campus locations only. Teachers and requests on this prototype are
- * fictional demonstration records. Schools are not participating partners.
+ * Public campus locations only. Teachers and requests in this product data are
+ * seeded classroom records. Schools are not participating partners.
  */
 export const schools: School[] = [
   {

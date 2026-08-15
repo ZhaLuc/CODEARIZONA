@@ -7,7 +7,7 @@ export const requests: ClassroomRequest[] = [
     schoolId: "school-isaac",
     title: "Hands-on Weather & Climate Lab",
     purpose:
-      "Give 7th graders actual instruments so they can measure temperature, record change, and present a forecast — not copy weather facts from a slide.",
+      "Give 7th graders actual instruments so they can measure temperature, record change, and present a forecast  -  not copy weather facts from a slide.",
     story:
       "We start a climate investigation in September. Right now we have six working thermometers for 32 students. That turns a lab into a line. If we can put a thermometer, a notebook, and a marker in every pair of hands, the period becomes science instead of waiting.",
     category: "Hands-on science",

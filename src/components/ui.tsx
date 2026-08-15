@@ -1,19 +1,22 @@
 import type { ReactNode } from "react";
+import type { FulfillmentStatus } from "@/lib/types";
+import { fulfillmentStatusLabel } from "@/lib/fulfillment";
 
 export function Badge({
   children,
-  tone = "ink",
+  tone = "muted",
 }: {
   children: ReactNode;
-  tone?: "ink" | "juniper" | "copper" | "clay" | "civic" | "sand";
+  tone?: "muted" | "ink" | "verified" | "pending" | "accent" | "info" | "danger";
 }) {
   const map = {
-    ink: "bg-ink text-[color:var(--paper)]",
-    juniper: "bg-juniper text-[color:var(--paper)]",
-    copper: "bg-copper text-[color:var(--paper)]",
-    clay: "bg-clay text-[color:var(--paper)]",
-    civic: "bg-civic text-[color:var(--paper)]",
-    sand: "bg-sand text-ink",
+    muted: "bg-surface-muted text-ink",
+    ink: "bg-ink text-[color:var(--surface)]",
+    verified: "bg-verified text-[color:var(--on-verified)]",
+    pending: "bg-pending text-[color:var(--on-pending)]",
+    accent: "bg-accent text-[color:var(--on-accent)]",
+    info: "bg-info text-[color:var(--on-info)]",
+    danger: "bg-danger text-[color:var(--on-danger)]",
   } as const;
   return (
     <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-medium ${map[tone]}`}>
@@ -22,54 +25,47 @@ export function Badge({
   );
 }
 
-export function SourceTag({ kind }: { kind: "demo" | "law" }) {
-  return kind === "law" ? (
-    <Badge tone="civic">Real legislation data</Badge>
-  ) : (
-    <Badge tone="sand">Demonstration classroom data</Badge>
-  );
+export function StatusChip({ status }: { status: FulfillmentStatus }) {
+  const tone = status === "verified" ? "verified" : status === "needs_attention" ? "danger" : "pending";
+  return <Badge tone={tone}>{fulfillmentStatusLabel[status]}</Badge>;
 }
 
-export function LedgerBar({
-  fulfilled,
-  needed,
-  label,
-}: {
-  fulfilled: number;
-  needed: number;
-  label?: string;
-}) {
-  const pct = needed === 0 ? 0 : Math.min(100, (fulfilled / needed) * 100);
+export function EmptyState({ title, body, action }: { title: string; body: string; action?: ReactNode }) {
   return (
-    <div>
-      <div className="mb-1.5 flex items-baseline justify-between gap-3 text-sm">
-        <span className="font-medium">
-          {fulfilled} / {needed} fulfilled
-        </span>
-        {label ? <span className="text-ink-soft">{label}</span> : <span className="text-ink-soft">{needed - fulfilled} remaining</span>}
-      </div>
-      <div className="progress-track h-2.5 rounded-full">
-        <div className="progress-fill rounded-full" style={{ width: `${pct}%` }} />
-      </div>
-    </div>
-  );
-}
-
-export function Stat({ k, v, hint }: { k: string; v: string; hint?: string }) {
-  return (
-    <div className="rounded-2xl border border-line bg-[color:var(--paper-2)]/60 p-4">
-      <p className="text-[11px] uppercase tracking-[0.18em] text-ink-soft">{k}</p>
-      <p className="display mt-1 text-3xl">{v}</p>
-      {hint ? <p className="mt-1 text-xs text-ink-soft">{hint}</p> : null}
-    </div>
-  );
-}
-
-export function EmptyState({ title, body }: { title: string; body: string }) {
-  return (
-    <div className="rounded-3xl border border-dashed border-line p-10 text-center">
+    <div className="rounded-[22px] border border-dashed border-line bg-surface px-8 py-12 text-center">
       <p className="display text-2xl">{title}</p>
-      <p className="mt-2 text-ink-soft">{body}</p>
+      <p className="mx-auto mt-2 max-w-[52ch] text-ink-soft">{body}</p>
+      {action ? <div className="mt-5">{action}</div> : null}
     </div>
+  );
+}
+
+export function FieldLabel({
+  htmlFor,
+  children,
+  hint,
+  error,
+}: {
+  htmlFor?: string;
+  children: ReactNode;
+  hint?: string;
+  error?: string;
+}) {
+  return (
+    <label htmlFor={htmlFor} className="block text-sm">
+      <span className="font-medium">{children}</span>
+      {hint ? <span className="mt-1 block text-xs text-ink-faint">{hint}</span> : null}
+      {error ? <span className="mt-1 block text-xs text-danger">{error}</span> : null}
+    </label>
+  );
+}
+
+export function PageHeader({ kicker, title, body }: { kicker?: string; title: string; body?: string }) {
+  return (
+    <header className="max-w-3xl">
+      {kicker ? <p className="text-[11px] uppercase tracking-[0.18em] text-ink-faint">{kicker}</p> : null}
+      <h1 className="display mt-2 text-4xl leading-[0.95] md:text-6xl">{title}</h1>
+      {body ? <p className="mt-4 max-w-[62ch] text-lg leading-relaxed text-ink-soft">{body}</p> : null}
+    </header>
   );
 }

@@ -3,13 +3,13 @@ export function whyThisBill(requestId: string, billId: string) {
   const map: Record<string, Record<string, string>> = {
     "req-weather-lab": {
       "hb-2316":
-        "This is a 7th-grade science and STEM lab. HB 2316 is introduced legislation about whether Arizona middle schools may offer CTE courses that count toward 8th-grade promotion and high school graduation. It does not fund this weather lab, and this prototype cannot confirm later bill actions after January 21, 2026.",
+        "This is a 7th-grade science and STEM lab. HB 2316 is introduced legislation about whether Arizona middle schools may offer CTE courses that count toward 8th-grade promotion and high school graduation. It does not fund this weather lab. Later bill actions after January 21, 2026 should be checked on azleg.gov.",
       "hb-4163":
         "HB 4163 is the enacted FY 2027 K-12 budget-reconciliation bill. It updates the per-student base used in school operating budgets, which is where classroom materials are typically paid for. It does not name this campus or create a supply program.",
     },
     "req-adaptive": {
       "hb-2621":
-        "This classroom is a special-education resource room. HB 2621 (Chapter 102) is about special-education access for pupils in unorganized territory and certain placements. It does not change this Flagstaff classroom’s materials list.",
+        "This classroom is a special-education resource room. HB 2621 (Chapter 102) is about special-education access for pupils in unorganized territory and certain placements. It does not change this Flagstaff classroom's materials list.",
     },
     "req-shop": {
       "hb-2316":
@@ -20,6 +20,6 @@ export function whyThisBill(requestId: string, billId: string) {
   };
   return (
     map[requestId]?.[billId] ??
-    "Listed because this classroom’s subject overlaps the bill’s education topic. That is adjacency — not a claim that the bill funds, names, or governs this specific request."
+    "Listed because this classroom's subject overlaps the bill's education topic. That is adjacency, not a claim that the bill funds, names, or governs this specific request."
   );
 }

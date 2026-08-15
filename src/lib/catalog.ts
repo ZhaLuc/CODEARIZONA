@@ -3,8 +3,8 @@ import { requests } from "@/data/requests";
 import { schools } from "@/data/schools";
 import { teachers } from "@/data/teachers";
 import { wishlists } from "@/data/wishlists";
-import { liveItems, priorityScore, requestTotals } from "./fulfillment";
-import type { DemoContribution } from "./types";
+import { liveItems, liveWishlist, priorityScore, requestTotals } from "./fulfillment";
+import type { LiveFulfillment } from "./types";
 
 export function schoolById(id: string) {
   return schools.find((s) => s.id === id);
@@ -34,28 +34,31 @@ export function wishlistByTeacher(teacherId: string) {
   return wishlists.find((w) => w.teacherId === teacherId);
 }
 
-export function hydrateRequest(requestId: string, contributions: DemoContribution[]) {
+export function hydrateRequest(requestId: string, events: LiveFulfillment[]) {
   const request = requestById(requestId);
   if (!request) return null;
   const teacher = teacherById(request.teacherId);
   const school = schoolById(request.schoolId);
   if (!teacher || !school) return null;
-  const items = liveItems(request, contributions);
+  const items = liveItems(request, events);
   const totals = requestTotals(items);
   const daysOpen = Math.max(
     1,
     Math.round((Date.parse("2026-08-15") - Date.parse(request.createdAt)) / 86400000),
   );
   const priority = priorityScore(totals.remaining, request.urgency, school.region, daysOpen);
-  return { request, teacher, school, items, totals, daysOpen, priority };
+  const history = events.filter((e) => e.requestId === request.id);
+  return { request, teacher, school, items, totals, daysOpen, priority, history };
 }
 
-export function allHydrated(contributions: DemoContribution[]) {
+export function allHydrated(events: LiveFulfillment[]) {
   return requests
-    .map((r) => hydrateRequest(r.id, contributions))
+    .map((r) => hydrateRequest(r.id, events))
     .filter((row): row is NonNullable<typeof row> => Boolean(row));
 }
 
 export const cities = [...new Set(schools.map((s) => s.city))].sort();
 export const categories = [...new Set(requests.map((r) => r.category))].sort();
 export const regions = [...new Set(schools.map((s) => s.region))].sort();
+
+export { liveWishlist };

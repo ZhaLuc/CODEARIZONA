@@ -16,7 +16,9 @@ export type BillTopic =
   | "teacher-workforce"
   | "curriculum"
   | "special-education";
-export type DataKind = "demo" | "legislation";
+export type Role = "teacher" | "community" | "admin";
+export type FulfillmentChannel = "in_person" | "wishlist_shipment";
+export type FulfillmentStatus = "submitted" | "under_review" | "verified" | "needs_attention";
 
 export type School = {
   id: string;
@@ -127,18 +129,47 @@ export type Bill = {
   sourceNote: string;
 };
 
-export type DemoContribution = {
-  requestId: string;
-  itemId: string;
-  quantity: number;
-  at: string;
+export type Account = {
+  id: string;
+  email: string;
+  name: string;
+  password: string;
+  role: Role;
+  teacherId?: string;
 };
 
-export type LastAction = DemoContribution & {
+export type EvidenceFile = {
+  fileName: string;
+  fileKind: "image" | "pdf";
+  sizeLabel: string;
+};
+
+export type LiveFulfillment = {
+  id: string;
+  actorId: string;
+  actorName: string;
+  teacherId: string;
+  requestId?: string;
+  wishlistId?: string;
+  itemId: string;
   itemName: string;
-  before: number;
-  after: number;
-  remainingAfter: number;
+  quantity: number;
+  channel: FulfillmentChannel;
+  status: FulfillmentStatus;
+  at: string;
+  destination: string;
+  evidence?: EvidenceFile;
+  teacherNote?: string;
+};
+
+export type LastAction = {
+  eventId: string;
+  itemName: string;
+  quantity: number;
   needed: number;
-  clamped?: boolean;
+  verified: number;
+  pending: number;
+  remaining: number;
+  remainingAfterPending: number;
+  kind: "submitted" | "verified" | "rejected";
 };

@@ -15,13 +15,13 @@ export const bills: Bill[] = [
     officialUrl: "https://www.azleg.gov/legtext/57leg/2r/bills/hb2316p.htm",
     factSheetUrl: "https://apps.azleg.gov/BillStatus/BillOverview/84053",
     sourceNote:
-      "Plain-language summary is based on the introduced bill text on azleg.gov. Later committee or floor actions should be checked on the official bill overview. This prototype cannot confirm actions after House second reading on January 21, 2026.",
+      "Plain-language summary is based on the introduced bill text on azleg.gov. Later committee or floor actions should be checked on the official bill overview. Later actions after House second reading on January 21, 2026 should be checked on azleg.gov.",
     officialSummary:
       "The introduced bill would allow district and charter schools that serve middle school students to offer career technical education courses during the 2026-2027 through 2028-2029 school years. Credits could count toward both eighth-grade promotion and high school graduation. Schools would need an agreement with a CTE district, a State Board-approved CTE provider, or a community college offering Perkins-aligned CTE. CTE districts could help fund participating middle school students but could not raise property taxes for that purpose or count those students in CTE district ADM. The section would repeal after December 31, 2037.",
     plainLanguage:
-      "This bill would let some Arizona middle schools (grades 6–8) offer career and technical classes that count for finishing 8th grade and for high school graduation. Schools that opt in would have to partner with an existing CTE provider. It would not automatically create a new program in every school, and it would not let CTE districts raise property taxes to pay for middle school students.",
+      "This bill would let some Arizona middle schools (grades 6-8) offer career and technical classes that count for finishing 8th grade and for high school graduation. Schools that opt in would have to partner with an existing CTE provider. It would not automatically create a new program in every school, and it would not let CTE districts raise property taxes to pay for middle school students.",
     impactTeachers:
-      "Science, CTE, and elective teachers in grades 6–8 could be asked to help staff or coordinate new CTE offerings if a school opts in. The bill does not itself fund teacher pay or classroom materials.",
+      "Science, CTE, and elective teachers in grades 6-8 could be asked to help staff or coordinate new CTE offerings if a school opts in. The bill does not itself fund teacher pay or classroom materials.",
     impactStudents:
       "Middle school students could earn CTE credit earlier, if their school offers the courses and they complete them with a passing grade.",
     impactFamilies:
@@ -55,9 +55,9 @@ export const bills: Bill[] = [
     lastVerified: VERIFIED,
     officialUrl: "https://www.azleg.gov/legtext/57leg/2r/bills/sb1101p.htm",
     sourceNote:
-      "Based on the prefiled/introduced bill text on azleg.gov. TrackBill lists referrals to Senate Education, Appropriations, Transportation and Technology, and Rules. This prototype cannot confirm later floor action.",
+      "Based on the prefiled/introduced bill text on azleg.gov. TrackBill lists referrals to Senate Education, Appropriations, Transportation and Technology, and Rules. Later floor action should be checked on azleg.gov.",
     officialSummary:
-      "The introduced bill would create a STEM and vocational teacher capacity growth pilot program in ADE. Eligible teachers are high school teachers of science, technology, engineering, mathematics, and/or CTE. ADE could approve enough district applications for up to 50 teachers. A participating nonprofit would provide professional development and paid summer internships of at least $6,000 per summer in 2027–2029. The bill would appropriate $250,000 from the general fund in each of FY 2027–2029. District eligibility in the introduced text is tightly limited by size, location, program offerings, and student characteristics. The section would repeal after December 31, 2030.",
+      "The introduced bill would create a STEM and vocational teacher capacity growth pilot program in ADE. Eligible teachers are high school teachers of science, technology, engineering, mathematics, and/or CTE. ADE could approve enough district applications for up to 50 teachers. A participating nonprofit would provide professional development and paid summer internships of at least $6,000 per summer in 2027-2029. The bill would appropriate $250,000 from the general fund in each of FY 2027-2029. District eligibility in the introduced text is tightly limited by size, location, program offerings, and student characteristics. The section would repeal after December 31, 2030.",
     plainLanguage:
       "This bill would fund a small, three-year pilot: up to 50 high school STEM and CTE teachers could get summer industry internships and training, with a stipend of at least $6,000 each summer. It is not a statewide teacher raise. The introduced text limits which districts can even apply.",
     impactTeachers:
@@ -151,13 +151,13 @@ export const bills: Bill[] = [
     impactStudents:
       "Eligible students who previously had an unclear district 'home' for special education access have a clearer statutory path to screening, evaluation, and FAPE.",
     impactFamilies:
-      "Parents in unorganized territory have a defined district to contact — the geographically closest adjoining district — rather than being left without a process.",
+      "Parents in unorganized territory have a defined district to contact  -  the geographically closest adjoining district  -  rather than being left without a process.",
     impactSchools:
       "The closest adjoining district must accept those child-find and, in specified cases, FAPE responsibilities, and may need to prepare certificate-of-educational-convenience paperwork.",
     supportersArgue:
       "Supporters describe the problem as children falling through a gap when no district is clearly responsible for child-find and special education access.",
     opponentsArgue:
-      "Districts asked to serve additional pupils from unorganized territory may argue about cost, transportation, and capacity. Those arguments are not adjudicated in this prototype.",
+      "Districts asked to serve additional pupils from unorganized territory may argue about cost, transportation, and capacity. Those arguments are not adjudicated here.",
     timeline: [
       {
         date: "2026-01-22",
