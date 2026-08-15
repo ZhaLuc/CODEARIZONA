@@ -28,4 +28,4 @@ Open [http://localhost:3000](http://localhost:3000).
 - **Real:** bill text/status sourced from azleg.gov, chaptered laws, official fact sheets, Governor veto reporting
 - School names/pins are public campus locations. Those schools are **not** partners.
 
-Maria’s seeded marker count is **8 / 20**. Reset returns to that.
+Maria’s seeded marker count is **8 / 20**. Reset returns to that. 
