@@ -17,9 +17,9 @@ export default function BillsPage() {
         <SourceTag kind="law" />
         <Badge tone="sand">Nonpartisan · official sources</Badge>
       </div>
-      <h1 className="display text-5xl">What is changing in Arizona education law?</h1>
+      <h1 className="display text-5xl">Policy sitting behind Arizona classrooms</h1>
       <p className="max-w-2xl text-ink-soft">
-        Plain English, then the official text. Meridian does not tell you how to vote, score bills as good or bad, or send a message in your name. Last verified August 15, 2026.
+        These bills are the state layer next to remaining classroom need — not a second product, and not a voting guide. Last verified August 15, 2026. Always check azleg.gov.
       </p>
       <div className="flex flex-wrap gap-2">
         <select className="rounded-full border border-line bg-transparent px-3 py-2 text-sm" value={status} onChange={(e) => setStatus(e.target.value)}>

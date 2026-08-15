@@ -9,24 +9,24 @@ import {
 } from "react";
 import { requests as seedRequests } from "@/data/requests";
 import { clampGift, liveItems, requestTotals } from "./fulfillment";
-import type { DemoContribution } from "./types";
+import type { DemoContribution, LastAction } from "./types";
 
-const KEY = "meridian-demo-v1";
+const KEY = "meridian-demo-v2";
 
 type DemoState = {
   contributions: DemoContribution[];
   role: "neighbor" | "teacher";
   teacherId: string;
-  shippingOpen: boolean;
-  lastGift: DemoContribution | null;
+  noticeOpen: boolean;
+  lastAction: LastAction | null;
 };
 
 const initial: DemoState = {
   contributions: [],
   role: "neighbor",
   teacherId: "teacher-maria",
-  shippingOpen: false,
-  lastGift: null,
+  noticeOpen: false,
+  lastAction: null,
 };
 
 let memory = load();
@@ -37,8 +37,8 @@ function load(): DemoState {
   try {
     const raw = localStorage.getItem(KEY);
     if (!raw) return initial;
-    const parsed = JSON.parse(raw) as DemoState;
-    return { ...initial, ...parsed };
+    const parsed = JSON.parse(raw) as Partial<DemoState>;
+    return { ...initial, ...parsed, lastAction: parsed.lastAction ?? null };
   } catch {
     return initial;
   }
@@ -77,37 +77,47 @@ export function resetDemo() {
 export function useDemoStore() {
   const state = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
-  const contribute = useCallback(
-    (requestId: string, itemId: string, quantity: number) => {
-      const request = seedRequests.find((r) => r.id === requestId);
-      if (!request) return { ok: false, message: "Request not found." };
-      if (!request.accepting) return { ok: false, message: "This classroom is not accepting contributions." };
-      const items = liveItems(request, memory.contributions);
-      const item = items.find((i) => i.id === itemId);
-      if (!item) return { ok: false, message: "Item not found." };
-      const gift = clampGift(item.remaining, quantity);
-      if (!gift.quantity) return { ok: false, message: gift.error ?? "Could not apply that amount." };
-      const row: DemoContribution = {
-        requestId,
-        itemId,
-        quantity: gift.quantity,
-        at: new Date().toISOString(),
-      };
-      setState({
-        contributions: [...memory.contributions, row],
-        lastGift: row,
-        shippingOpen: true,
-      });
-      return {
-        ok: true,
-        message: gift.clamped ? gift.error : `Recorded ${gift.quantity} toward ${item.name}.`,
-        quantity: gift.quantity,
-      };
-    },
-    [],
-  );
+  const contribute = useCallback((requestId: string, itemId: string, quantity: number) => {
+    const request = seedRequests.find((r) => r.id === requestId);
+    if (!request) return { ok: false, message: "Need not found." };
+    if (!request.accepting) return { ok: false, message: "This classroom is not accepting items." };
+    const items = liveItems(request, memory.contributions);
+    const item = items.find((i) => i.id === itemId);
+    if (!item) return { ok: false, message: "Item not found." };
+    const gift = clampGift(item.remaining, quantity);
+    if (!gift.quantity) return { ok: false, message: gift.error ?? "Could not apply that amount." };
+    const before = item.fulfilled;
+    const after = before + gift.quantity;
+    const remainingAfter = item.quantityNeeded - after;
+    const row: DemoContribution = {
+      requestId,
+      itemId,
+      quantity: gift.quantity,
+      at: new Date().toISOString(),
+    };
+    const action: LastAction = {
+      ...row,
+      itemName: item.name,
+      before,
+      after,
+      remainingAfter,
+      needed: item.quantityNeeded,
+      clamped: gift.clamped,
+    };
+    setState({
+      contributions: [...memory.contributions, row],
+      lastAction: action,
+      noticeOpen: true,
+    });
+    const closed = `Closed ${gift.quantity} of ${item.remaining}. ${remainingAfter} still needed.`;
+    return {
+      ok: true,
+      message: gift.clamped ? `${gift.error} ${closed}` : closed,
+      quantity: gift.quantity,
+    };
+  }, []);
 
-  const closeShipping = useCallback(() => setState({ shippingOpen: false }), []);
+  const closeNotice = useCallback(() => setState({ noticeOpen: false }), []);
   const setRole = useCallback((role: DemoState["role"]) => setState({ role }), []);
 
   const liveByRequest = useMemo(() => {
@@ -121,7 +131,7 @@ export function useDemoStore() {
   return {
     ...state,
     contribute,
-    closeShipping,
+    closeNotice,
     setRole,
     resetDemo,
     liveByRequest,

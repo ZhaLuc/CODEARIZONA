@@ -133,3 +133,12 @@ export type DemoContribution = {
   quantity: number;
   at: string;
 };
+
+export type LastAction = DemoContribution & {
+  itemName: string;
+  before: number;
+  after: number;
+  remainingAfter: number;
+  needed: number;
+  clamped?: boolean;
+};

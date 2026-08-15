@@ -6,6 +6,7 @@ import { RequestCard } from "@/components/RequestCard";
 import { ArizonaSilhouette } from "@/components/ArizonaSilhouette";
 import { EmptyState, SourceTag } from "@/components/ui";
 import { allHydrated, categories, cities } from "@/lib/catalog";
+import { isAlmostThere } from "@/lib/fulfillment";
 import { useDemo } from "@/lib/store";
 import type { MapPoint } from "@/components/NeedMap";
 
@@ -16,12 +17,14 @@ export default function ExplorePage() {
   const [category, setCategory] = useState("");
   const [urgency, setUrgency] = useState("");
   const [priorityOnly, setPriorityOnly] = useState(false);
+  const [almostOnly, setAlmostOnly] = useState(false);
 
   const filtered = rows.filter((r) => {
     if (city && r.school.city !== city) return false;
     if (category && r.request.category !== category) return false;
     if (urgency && r.request.urgency !== urgency) return false;
     if (priorityOnly && r.priority < 6) return false;
+    if (almostOnly && !r.items.some((i) => isAlmostThere(i.remaining, i.quantityNeeded))) return false;
     return true;
   });
 
@@ -36,6 +39,9 @@ export default function ExplorePage() {
         priority: r.priority,
         request: r.request,
         teacher: r.teacher,
+        openLines: r.items
+          .filter((i) => i.remaining > 0)
+          .map((i) => ({ name: i.name, remaining: i.remaining })),
       })),
     [filtered],
   );
@@ -60,9 +66,9 @@ export default function ExplorePage() {
           <div className="flex gap-2">
             <SourceTag kind="demo" />
           </div>
-          <h1 className="display mt-2 text-5xl">Where can you make a difference?</h1>
+          <h1 className="display mt-2 text-5xl">Where are classroom needs still open?</h1>
           <p className="mt-2 max-w-2xl text-ink-soft">
-            Markers show remaining items at school campuses. Rural and slower-moving requests can surface in Needs priority — a transparent score, not an unverified poverty claim.
+            Markers are remaining item counts at school campuses. Phoenix, Tucson, Yuma, Window Rock, Page, Nogales, Flagstaff, Kingman, Payson — the pin is the leftover number, not a school logo.
           </p>
         </div>
       </div>
@@ -86,6 +92,10 @@ export default function ExplorePage() {
           <option value="needed">Open request</option>
         </select>
         <label className="flex items-center gap-2 rounded-full border border-line px-3 py-2 text-sm">
+          <input type="checkbox" checked={almostOnly} onChange={(e) => setAlmostOnly(e.target.checked)} />
+          Almost there
+        </label>
+        <label className="flex items-center gap-2 rounded-full border border-line px-3 py-2 text-sm">
           <input type="checkbox" checked={priorityOnly} onChange={(e) => setPriorityOnly(e.target.checked)} />
           Needs priority
         </label>
@@ -102,8 +112,8 @@ export default function ExplorePage() {
 
       {filtered.length === 0 ? (
         <EmptyState
-          title="No open requests in that slice"
-          body="Try another city, or clear Needs priority. Rural classrooms are in Fort Defiance, Page, Payson, Kingman, Yuma, and Nogales."
+          title="No remaining need in that slice"
+          body="Clear Almost there, or look at Fort Defiance, Page, Payson, Kingman, Yuma, and Nogales."
         />
       ) : (
         <div className="grid gap-4 md:grid-cols-2">

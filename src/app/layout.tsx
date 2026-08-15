@@ -16,7 +16,7 @@ const sans = Outfit({
 export const metadata: Metadata = {
   title: "Meridian — Arizona classroom needs, mapped",
   description:
-    "See exactly what Arizona classrooms still need, help from where you live, and read the education bills that shape those classrooms.",
+    "See what’s still missing in an Arizona classroom, close part of that remaining need, and read the state education policy sitting behind it.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -33,9 +33,8 @@ export default function DashboardPage() {
         {reqs.map((r) => (
           <div key={r.request.id} className="rounded-3xl border border-line p-5">
             <p className="text-xs uppercase tracking-[0.16em] text-ink-soft">{r.request.title}</p>
-            <p className="display mt-2 text-4xl">
-              {r.totals.fulfilled}/{r.totals.needed}
-            </p>
+            <p className="display mt-2 text-4xl">{r.totals.remaining}</p>
+            <p className="text-sm text-ink-soft">still needed · {r.totals.fulfilled}/{r.totals.needed} closed</p>
             <div className="mt-3">
               <LedgerBar fulfilled={r.totals.fulfilled} needed={r.totals.needed} />
             </div>

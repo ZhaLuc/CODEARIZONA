@@ -28,7 +28,7 @@ export default function TeacherPage() {
         </div>
         <div>
           <div className="flex flex-wrap gap-2">
-            <Badge tone="juniper">Verified educator · prototype badge</Badge>
+            <Badge tone="sand">Demo educator</Badge>
             <Badge tone="sand">{school.city}</Badge>
           </div>
           <h1 className="display mt-2 text-5xl">{teacher.name}</h1>
@@ -53,7 +53,7 @@ export default function TeacherPage() {
         </div>
       </section>
       <section>
-        <h2 className="display text-3xl">Open requests</h2>
+          <h2 className="display text-3xl">Open remaining needs</h2>
         <div className="mt-4 grid gap-4 md:grid-cols-2">
           {reqs.map((request) => {
             const row = hydrateRequest(request.id, extras)!;

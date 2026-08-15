@@ -3,7 +3,7 @@
 import { DemoProvider } from "@/lib/store";
 import { Nav, Footer } from "@/components/Nav";
 import { DemoChrome } from "@/components/DemoChrome";
-import { ShippingModal } from "@/components/DonatePanel";
+import { FulfillmentNotice } from "@/components/DonatePanel";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -12,7 +12,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <main className="mx-auto min-h-[70vh] max-w-6xl px-5 py-8">{children}</main>
       <Footer />
       <DemoChrome />
-      <ShippingModal />
+      <FulfillmentNotice />
     </DemoProvider>
   );
 }

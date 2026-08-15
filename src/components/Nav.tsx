@@ -7,7 +7,7 @@ import { useDemo } from "@/lib/store";
 const links = [
   { href: "/explore", label: "Map" },
   { href: "/requests", label: "Needs" },
-  { href: "/bills", label: "Education bills" },
+  { href: "/bills", label: "Policy" },
   { href: "/trust", label: "Trust" },
 ];
 
@@ -44,7 +44,7 @@ export function Nav() {
             href={role === "teacher" ? "/dashboard" : "/explore"}
             className="rounded-full bg-ink px-4 py-2 text-sm text-[color:var(--paper)]"
           >
-            {role === "teacher" ? "Classroom desk" : "Help nearby"}
+            {role === "teacher" ? "Classroom desk" : "Open remaining needs"}
           </Link>
         </div>
       </div>
@@ -59,7 +59,7 @@ export function Footer() {
         <div>
           <p className="display text-xl text-ink">Meridian</p>
           <p className="mt-2 max-w-sm">
-            A prototype of an Arizona classroom-need network with civic context. Classroom records are demonstration data. Bill pages use official Arizona legislative sources.
+            A remaining-need ledger for Arizona classrooms, with state policy sitting next to the items still open. Classroom records are demonstration data. Bill pages use official Arizona legislative sources.
           </p>
         </div>
         <div className="space-y-2">

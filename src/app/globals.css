@@ -84,8 +84,23 @@ button, input, select { font: inherit; }
 
 .progress-fill {
   height: 100%;
-  background: var(--juniper);
+  background: var(--ink);
   transition: width 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ledger-row.complete .progress-fill { background: var(--juniper); }
+.ledger-row.almost .progress-fill { background: var(--copper); }
+.ledger-row.partial .progress-fill { background: var(--ink); }
+.ledger-row.not-started .progress-fill { background: var(--sand); }
+
+@keyframes need-pop {
+  0% { transform: scale(0.98); opacity: 0.65; }
+  40% { transform: scale(1.03); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
+.need-pop {
+  animation: need-pop 650ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .leaflet-container {

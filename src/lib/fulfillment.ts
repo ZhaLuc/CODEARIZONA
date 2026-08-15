@@ -36,6 +36,27 @@ export function requestTotals(items: LiveItem[]) {
   return { needed, fulfilled, remaining, pct, status, itemCount: items.length, filledItems: items.filter((i) => i.status === "fulfilled").length };
 }
 
+export type LedgerState = "not-started" | "partial" | "almost" | "complete";
+
+export function ledgerState(fulfilled: number, needed: number): LedgerState {
+  if (needed <= 0 || fulfilled >= needed) return "complete";
+  if (fulfilled <= 0) return "not-started";
+  const remaining = needed - fulfilled;
+  if (remaining <= 5 || remaining / needed <= 0.2) return "almost";
+  return "partial";
+}
+
+export function isAlmostThere(remaining: number, needed: number) {
+  return remaining > 0 && (remaining <= 5 || remaining / needed <= 0.2);
+}
+
+export const ledgerStateLabel: Record<LedgerState, string> = {
+  "not-started": "Not started",
+  partial: "Partially closed",
+  almost: "Almost there",
+  complete: "Closed",
+};
+
 export function clampGift(remaining: number, requested: number) {
   if (!Number.isFinite(requested) || requested < 1) {
     return { quantity: 0, error: "Enter a whole number of 1 or more." };

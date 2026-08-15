@@ -83,11 +83,11 @@ export default function BillDetailPage() {
       <CivicAction bill={bill} />
       {bill.id === "hb-2316" && (
         <p className="text-sm">
-          See a classroom this could touch:{" "}
+          See a classroom with topic overlap:{" "}
           <Link href="/requests/req-weather-lab" className="underline decoration-line underline-offset-4">
-            Maria Hernandez’s weather lab
+            the weather-lab remaining ledger
           </Link>
-          .
+          . Adjacency only — this bill does not fund that demo classroom.
         </p>
       )}
     </div>

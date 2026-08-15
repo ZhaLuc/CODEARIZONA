@@ -12,9 +12,9 @@ export default function RequestsPage() {
   return (
     <div className="space-y-6">
       <SourceTag kind="demo" />
-      <h1 className="display text-5xl">Open classroom needs</h1>
+      <h1 className="display text-5xl">Open remaining needs</h1>
       <p className="max-w-2xl text-ink-soft">
-        Each card is itemized. A request with finished markers and unfinished notebooks is still open. That is the difference between a funded project and a remaining need.
+        Each card is the leftover count. Closed construction paper does not close unfinished notebooks. That is the difference between a funded project and a remaining need.
       </p>
       <div className="grid gap-4 md:grid-cols-2">
         {rows.map((r) => (

@@ -23,12 +23,12 @@ export default function TrustPage() {
             "The public sees school, city, and campus map point. Shipping is modeled as a private school fulfillment path. Student names, photos, and identifiable classroom rosters are not collected.",
           ],
           [
-            "Verification, honestly",
-            "The green badge is a seeded prototype state. Production verification would combine school-domain email, district confirmation, and educator credential checks. This app does not currently verify anyone.",
+            "Demo educator, not verified",
+            "Profiles show Demo educator. This app does not currently verify anyone. Production would use school-domain email, district confirmation, and educator credential checks — and would say so only after those checks ran.",
           ],
           [
-            "Simulated gifts",
-            "Recording a contribution updates remaining quantities in this browser. There is no payment, no shipment, and no email. Reset demo returns Maria’s markers to 8 / 20.",
+            "Simulated closing of need",
+            "Closing a quantity updates remaining items in this browser. There is no payment, no shipment, and no email. Reset demo returns Maria’s markers to 8 / 20.",
           ],
           [
             "Nonpartisan by construction",
