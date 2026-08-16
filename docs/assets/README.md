@@ -14,6 +14,5 @@ Recommended export: PNG, sRGB, no browser chrome unless it is a mobile frame. Cr
 | in-person-confirmation.png | In-person trust | Teacher or community pending view | In-person fulfillment awaiting confirmation, confirm received | 16:10, 1600 x 1000 | Product grid |
 | arizona-map.png | Statewide discovery | Explore map | Multiple regions (not Phoenix-only) | 16:9, 1600 x 900 | Map section |
 | policy-adjacency.png | Civic layer | Request or bill page | "Policy relevant to this classroom", bill, plain English, official source, legislator action | 16:10, 1600 x 1000 | Policy section |
-| fulfillment-transition.png | Mechanism graphic | Ledger before/after | 8/20 then 13/20 and 7 remaining | 16:9 or diptych, 1600 x 900 | Core mechanism |
 
 Until these files exist, GitHub will show broken-image placeholders. That is intentional. Do not substitute stock photos.
