@@ -44,7 +44,7 @@ Judging criteria beyond this panel were not documented in this repository.
 
 ## The original question
 
-How can a community help struggling classrooms?
+Build something that Arizonians Want
 
 ## The initial problem with the idea
 
