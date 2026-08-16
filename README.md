@@ -251,11 +251,6 @@ Screenshots below are the intended captures. Files live in [`docs/assets/`](docs
 
 </div>
 
-<p align="center">
-  <img src="docs/assets/fulfillment-transition.png" alt="Fulfillment transition: 8 / 20 verified, then 13 / 20 after teacher verification, with 7 still needed." width="90%">
-</p>
-<p align="center"><em>The mechanism in one frame: 8 / 20 stays 8 / 20 while 5 are pending, then becomes 13 / 20 when the teacher verifies.</em></p>
-
 ---
 
 ## Arizona policy
