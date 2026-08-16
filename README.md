@@ -11,7 +11,7 @@
 [![Leaflet](https://img.shields.io/badge/Leaflet-Arizona_map-2A4556?style=flat-square)](https://leafletjs.com/)
 
 **An Arizona classroom remaining-need ledger.**  
-Built at [Code Arizona](https://codeaz.codehatch.org/) (not Hack Arizona) on August 15, 2026 at BASIS Chandler, in a 10-hour high-school competition against **31 teams**.
+Built at [Code Arizona](https://codeaz.codehatch.org/) on August 15, 2026 at BASIS Chandler, in a 10-hour high-school competition against **31 teams**.
 
 </div>
 
