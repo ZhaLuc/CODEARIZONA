@@ -224,7 +224,8 @@ Teachers can also create an account. New teacher accounts do not inherit Maria H
 
 ## Product tour
 
-Screenshots below are the intended captures. Files live in [`docs/assets/`](docs/assets/README.md). If an image is not in the repo yet, GitHub will show the alt text until the file is added.
+Screenshots below are the intended captures. Files live in [`docs/assets/`](docs/assets/README.md). If an image is not in the repo yet, GitHub will show the alt text until the file is added. 
+#### DISCLAIMER: The names used in the demo are fictional and made up. 
 
 <div align="center">
 
